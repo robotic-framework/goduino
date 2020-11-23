@@ -2,7 +2,7 @@ package goduino
 
 import (
 	"fmt"
-	"github.com/argandas/goduino/firmata"
+	"github.com/robotic-framework/goduino/firmata"
 	"github.com/tarm/serial"
 	"io"
 	"log"
@@ -30,6 +30,8 @@ type firmataBoard interface {
 	I2cRead(int, int) error
 	I2cWrite(int, []byte) error
 	I2cConfig(int) error
+	SendString(string) error
+	ReadString() <-chan string
 }
 
 // Arduino Firmata client for golang

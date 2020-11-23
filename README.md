@@ -1,9 +1,9 @@
 # goduino
 Go's package for Arduino
 
-Goduino uses [Firmata](https://github.com/firmata/protocol) protocol for [Arduino](https://www.arduino.cc/) 
+Goduino uses [Firmata](https://github.com/firmata/protocol) protocol for [Arduino](https://www.arduino.cc/)
 
-[![GoDoc](http://godoc.org/github.com/argandas/goduino?status.svg)](http://godoc.org/github.com/argandas/goduino)
+[![GoDoc](http://godoc.org/github.com/robotic-framework/goduino?status.svg)](http://godoc.org/github.com/robotic-framework/goduino)
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ Goduino uses [Firmata](https://github.com/firmata/protocol) protocol for [Arduin
 ## Installation
 
 ```bash
-	go get github.com/argandas/goduino
+	go get github.com/robotic-framework/goduino
 ```
 
 ## Usage
@@ -27,7 +27,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/argandas/goduino"
+	"github.com/robotic-framework/goduino"
 	"time"
 )
 
@@ -39,7 +39,7 @@ func main() {
 		return
 	}
 	defer arduino.Disconnect()
-	
+
 	arduino.PinMode(13, goduino.Output)
 	for {
 		arduino.DigitalWrite(13, 1)

@@ -2,6 +2,7 @@ package firmata
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -26,6 +27,8 @@ type Firmata struct {
 	analogMappingDone bool
 	capabilityDone    bool
 	logger            *log.Logger
+
+	stringCh chan string
 }
 
 // Pin represents a pin on the firmata board
@@ -54,6 +57,7 @@ func New() *Firmata {
 		analogPins:      []int{},
 		connected:       false,
 		logger:          log.New(os.Stdout, "[firmata] ", log.Ltime),
+		stringCh:        make(chan string),
 	}
 
 	return c
@@ -213,6 +217,20 @@ func (f *Firmata) I2cWrite(address int, data []byte) error {
 // has been written to.
 func (f *Firmata) I2cConfig(delay int) error {
 	return f.writeSysex([]byte{byte(I2CConfig), byte(delay & 0xFF), byte((delay >> 8) & 0xFF)})
+}
+
+func (f *Firmata) SendString(str string) error {
+	buf := bytes.NewBuffer([]byte{})
+	buf.WriteByte(byte(StringData))
+	for _, r := range []byte(str) {
+		buf.WriteByte(r & 0x7F)
+		buf.WriteByte((r >> 7) & 0x7F)
+	}
+	return f.writeSysex(buf.Bytes())
+}
+
+func (f *Firmata) ReadString() <-chan string {
+	return f.stringCh
 }
 
 func (f *Firmata) togglePinReporting(pin int, state int, mode byte) error {
@@ -431,6 +449,7 @@ func (f *Firmata) parseSysEx(data []byte) {
 	case StringData:
 		str := data[:]
 		f.logger.Printf("StringData%v", string(str[:len(str)-1]))
+		f.stringCh <- string(str)
 	}
 }
 
